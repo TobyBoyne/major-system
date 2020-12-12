@@ -2,8 +2,8 @@ from urllib import request
 import json
 from tqdm import tqdm
 import parse
-
 import os
+from eng_to_ipa import convert
 
 url = 'https://en.wikipedia.org/w/api.php?action=query&format=json&prop=categories%7Cpageviews&generator=allpages&formatversion=2&gapfrom=Ba&gaplimit=10'
 url = 'https://en.wiktionary.org/w/api.php?action=query&format=json&prop=categories%7Cpageviews&generator=allpages&formatversion=2&gapfrom=Team&gaplimit=10'
@@ -60,25 +60,22 @@ def word_to_nums(ipa):
 
 
 if __name__ == '__main__':
-	words = get_word_list()[100:200]
+	words = get_word_list()
 	major_dict = {}
 	with tqdm(words) as tqdm_it:
-		tqdm_it.set_description()
 		for n, word in enumerate(tqdm_it):
-			url = f'{BASE_URL}&sectiontitle=Pronounciation&page={word}'
-			response = get_request(url)
-			ipa = get_pronunciation(response)
+			ipa = convert(word)
 			nums = word_to_nums(ipa)
 			# if there are 0 or 1 consonants, don't save this value
-			if len(nums) < 2:
+			if '*' not in ipa and len(nums) > 1:
 				major_dict[word] = nums
 
 	# save the dictionary to a json file
 	out_fname = 'wordlist_major.json'
 	with open(out_fname, 'r', encoding='utf-8') as outfile:
-		current_dict = json.load(outfile)
-		major_dict.update(current_dict)
+		old_dict = json.load(outfile)
+		old_dict.update(major_dict)
 
 	with open(out_fname, 'w', encoding='utf-8') as outfile:
-		json.dump(major_dict, outfile,
+		json.dump(old_dict, outfile,
 				  indent=4, sort_keys=True, ensure_ascii=False)
