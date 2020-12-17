@@ -1,21 +1,39 @@
 const fname = 'wordlist_processing/wordlist_major.json'
 
-async function loadWordlist() {
+let currentWord,
+    currentNums,
+    globalWordList;
+
+
+async function loadWordList() {
     const response = await fetch(fname);
     return await response.json();
 }
 
-loadWordlist()
-    .then(response => testWord(response))
+loadWordList()
+    .then(response => setup(response))
     .catch(error => console.error(error))
 
-
-async function testWord(wordList) {
-    console.log(wordList)
-    let keys = Object.keys(wordList)
+async function setup(wordList) {
+    globalWordList = wordList
+    getNewWord()
+}
+async function getNewWord() {
+    let keys = Object.keys(globalWordList)
     let idx = Math.floor(Math.random() * keys.length);
-    console.log(idx);
-    let nums = wordList[keys[idx]]
+    let nums = globalWordList[keys[idx]]
+
+    currentWord = keys[idx]
+    currentNums = nums
     document.getElementById('currentWord').innerText = keys[idx]
-    document.getElementById('correctNums').innerText = nums
+    document.getElementById('numInput').value = ""
+}
+
+
+function checkAnswer(value) {
+    if (value === currentNums) {
+        console.log("Correct!")
+        getNewWord()
+
+    }
 }
