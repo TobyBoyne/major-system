@@ -5,25 +5,12 @@ import os
 import random
 from eng_to_ipa import convert
 
-# BASE_URL = 'https://en.wiktionary.org/w/api.php?action=parse&format=json'
-
-PATTERN = parse.compile(r'{}<span class="IPA">{pronounciation}</span>{}')
-
 TRANSLATE_FNAME = r'C:\Users\tobyb\OneDrive\Documents\JavaScript\JavaScriptProjects\major-system\data\major_translate.json'
 with open(TRANSLATE_FNAME, 'r', encoding='utf-8') as infile:
 	json_file = json.load(infile)
 	TRANSLATE = {int(k): v for k, v in json_file.items()}
 	TRANSLATE_REVERSED = {i: key for key, sub in json_file.items() for i in sub} # unpack all
 
-
-# def get_request(url):
-# 	raw_data = request.urlopen(url).read()
-# 	data = json.loads(raw_data)
-#
-# 	# print response
-# 	# print(json.dumps(data, indent=4))
-#
-# 	return data
 
 def get_word_list():
 	cwd = os.getcwd()
@@ -32,16 +19,6 @@ def get_word_list():
 		words = [line.rstrip() for line in infile.readlines()]
 
 	return words
-
-
-# def get_pronunciation(json_response):
-# 	if 'error' in json_response:
-# 		return None
-# 	text = json_response['parse']['text']['*']
-# 	pronounce = PATTERN.parse(text)
-# 	if pronounce is None:
-# 		return None
-# 	return pronounce['pronounciation'].replace('͡', '')
 
 
 def word_to_nums(ipa):
@@ -56,9 +33,7 @@ def word_to_nums(ipa):
 	return nums
 
 
-
-if __name__ == '__main__':
-	overwrite = True
+def write_wordlist_ipa(overwrite=True):
 	# min/max count of numbers
 	min_length = 2
 	max_length = 5
@@ -86,3 +61,19 @@ if __name__ == '__main__':
 	with open(out_fname, 'w', encoding='utf-8') as outfile:
 		json.dump(old_dict, outfile,
 				  indent=4, sort_keys=True, ensure_ascii=False)
+
+
+def gen_cmu_wordlist():
+	in_fname = 'CMU_dict.json'
+	out_fname = 'cmu_wordlist.txt'
+
+	with open(in_fname, 'r') as infile:
+		cmu_dict = json.load(infile)
+
+	words = [word + '\n' for word in cmu_dict.keys() if word.isalpha()]
+	with open(out_fname, 'w') as outfile:
+		outfile.writelines(words, )
+
+
+if __name__ == '__main__':
+	gen_cmu_wordlist()
