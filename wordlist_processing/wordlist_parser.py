@@ -1,13 +1,11 @@
-from urllib import request
 import json
 from tqdm import tqdm
 import parse
 import os
+import random
 from eng_to_ipa import convert
 
-url = 'https://en.wikipedia.org/w/api.php?action=query&format=json&prop=categories%7Cpageviews&generator=allpages&formatversion=2&gapfrom=Ba&gaplimit=10'
-url = 'https://en.wiktionary.org/w/api.php?action=query&format=json&prop=categories%7Cpageviews&generator=allpages&formatversion=2&gapfrom=Team&gaplimit=10'
-BASE_URL = 'https://en.wiktionary.org/w/api.php?action=parse&format=json'
+# BASE_URL = 'https://en.wiktionary.org/w/api.php?action=parse&format=json'
 
 PATTERN = parse.compile(r'{}<span class="IPA">{pronounciation}</span>{}')
 
@@ -18,14 +16,14 @@ with open(TRANSLATE_FNAME, 'r', encoding='utf-8') as infile:
 	TRANSLATE_REVERSED = {i: key for key, sub in json_file.items() for i in sub} # unpack all
 
 
-def get_request(url):
-	raw_data = request.urlopen(url).read()
-	data = json.loads(raw_data)
-
-	# print response
-	# print(json.dumps(data, indent=4))
-
-	return data
+# def get_request(url):
+# 	raw_data = request.urlopen(url).read()
+# 	data = json.loads(raw_data)
+#
+# 	# print response
+# 	# print(json.dumps(data, indent=4))
+#
+# 	return data
 
 def get_word_list():
 	cwd = os.getcwd()
@@ -36,14 +34,14 @@ def get_word_list():
 	return words
 
 
-def get_pronunciation(json_response):
-	if 'error' in json_response:
-		return None
-	text = json_response['parse']['text']['*']
-	pronounce = PATTERN.parse(text)
-	if pronounce is None:
-		return None
-	return pronounce['pronounciation'].replace('͡', '')
+# def get_pronunciation(json_response):
+# 	if 'error' in json_response:
+# 		return None
+# 	text = json_response['parse']['text']['*']
+# 	pronounce = PATTERN.parse(text)
+# 	if pronounce is None:
+# 		return None
+# 	return pronounce['pronounciation'].replace('͡', '')
 
 
 def word_to_nums(ipa):
@@ -60,14 +58,20 @@ def word_to_nums(ipa):
 
 
 if __name__ == '__main__':
+	overwrite = True
+	# min/max count of numbers
+	min_length = 2
+	max_length = 5
+
 	words = get_word_list()
+	words = random.sample(words, 100)
 	major_dict = {}
 	with tqdm(words) as tqdm_it:
 		for n, word in enumerate(tqdm_it):
 			ipa = convert(word)
 			nums = word_to_nums(ipa)
-			# if there are 0 or 1 consonants, don't save this value
-			if '*' not in ipa and len(nums) > 1:
+			# don't save this value if too many/few numbers
+			if '*' not in ipa and min_length <= len(nums) <= max_length:
 				major_dict[word] = nums
 
 	# save the dictionary to a json file
@@ -75,6 +79,9 @@ if __name__ == '__main__':
 	with open(out_fname, 'r', encoding='utf-8') as outfile:
 		old_dict = json.load(outfile)
 		old_dict.update(major_dict)
+
+	if overwrite:
+		old_dict = major_dict
 
 	with open(out_fname, 'w', encoding='utf-8') as outfile:
 		json.dump(old_dict, outfile,
