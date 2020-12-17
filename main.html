@@ -3,11 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>Major System</title>
+    <script src="page_setup.js"></script>
+    <script src="word_to_num.js"></script>
+    <script src="num_to_word.js"></script>
 </head>
 <body>
+<div id="wordToNum">
     <label id="currentWord"></label>
     <br>
+    <label for="numInput"></label>
     <input type="text" oninput="checkAnswer(this.value)" id="numInput">
-    <script src="word_to_num.js"></script>
+
+</div>
+<div id="numToWord">
+    <label for="number"></label>
+    <textarea id="number" onselect="selectText()"></textarea>
+    <div id="wordSuggestions">
+        <ul id="suggestions">
+        </ul>
+    </div>
+</div>
+
 </body>
 </html>
