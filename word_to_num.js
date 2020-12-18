@@ -8,8 +8,8 @@ function getNewWord() {
 
     currentWord = keys[idx]
     currentNums = nums
-    document.getElementById('currentWord').innerText = keys[idx]
-    document.getElementById('numInput').value = ""
+    $('currentWord').innerText = keys[idx]
+    $('numInput').value = ""
 }
 
 

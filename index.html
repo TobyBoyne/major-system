@@ -3,14 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Major System</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
     <script src="page_setup.js"></script>
     <script src="word_to_num.js"></script>
     <script src="num_to_word.js"></script>
-
-    <link href="node_modules/highlight-within-textarea/jquery.highlight-within-textarea.css" rel="stylesheet">
-    <script src="node_modules/highlight-within-textarea/jquery.highlight-within-textarea.js"></script>
+    <link href="highlight.css" rel="stylesheet">
 </head>
 <body>
 <div id="wordToNum">
@@ -20,14 +17,15 @@
     <input type="text" oninput="checkAnswer(this.value)" id="numInput">
 
 </div>
-<div id="numToWord">
-    <label for="number"></label>
-    <textarea id="number" class="numInput" onselect="selectText(this)"></textarea>
+<div id="numToWord" class="container">
+    <div class="backdrop" id="backdrop">
+        <div class="highlights" id="highlights"></div>
+    </div>
+    <textarea id="numberTextarea" class="numInput" onselect="selectText(this)">abcdefg</textarea>
     <div id="wordSuggestions">
         <ul id="suggestions">
         </ul>
     </div>
 </div>
-
 </body>
 </html>
