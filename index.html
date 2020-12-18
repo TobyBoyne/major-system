@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Major System</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
     <script src="page_setup.js"></script>
     <script src="word_to_num.js"></script>
     <script src="num_to_word.js"></script>
+
+    <link href="node_modules/highlight-within-textarea/jquery.highlight-within-textarea.css" rel="stylesheet">
+    <script src="node_modules/highlight-within-textarea/jquery.highlight-within-textarea.js"></script>
 </head>
 <body>
 <div id="wordToNum">
@@ -17,7 +22,7 @@
 </div>
 <div id="numToWord">
     <label for="number"></label>
-    <textarea id="number" onselect="selectText()"></textarea>
+    <textarea id="number" class="numInput" onselect="selectText(this)"></textarea>
     <div id="wordSuggestions">
         <ul id="suggestions">
         </ul>
